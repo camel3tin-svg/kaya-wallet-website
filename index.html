@@ -1,1 +1,572 @@
-<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Kaya Wallet</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n    <script src=\"script.js\" defer></script>\n</head>\n<body>\n    <header>\n        <h1>Kaya Wallet</h1>\n        <nav>\n            <button id=\"login-btn\">Login</button>\n            <button id=\"logout-btn\" style=\"display:none;\">Logout</button>\n        </nav>\n    </header>\n    <main>\n        <section id=\"login-form\" style=\"display:block;\">\n            <h2>Login</h2>\n            <form onsubmit=\"handleLogin(event)\">\n                <label for=\"username\">Username:</label>\n                <input type=\"text\" id=\"username\" required>\n                <label for=\"password\">Password:</label>\n                <input type=\"password\" id=\"password\" required>\n                <button type=\"submit\">Login</button>\n            </form>\n        </section>\n        <section id=\"dashboard\" style=\"display:none;\">\n            <h2>Dashboard</h2>\n            <p>Welcome to your dashboard!</p>\n            <!-- additional dashboard content -->\n        </section>\n    </main>\n    <footer>\n        <p>&copy; 2026 Kaya Wallet</p>\n    </footer>\n    <script>\n        function handleLogin(event) {\n            event.preventDefault();\n            // Perform login logic here\n            document.getElementById('login-form').style.display = 'none';\n            document.getElementById('dashboard').style.display = 'block';\n            document.getElementById('logout-btn').style.display = 'inline';\n        }\n        document.getElementById('logout-btn').onclick = function() {\n            document.getElementById('dashboard').style.display = 'none';\n            document.getElementById('login-form').style.display = 'block';\n            this.style.display = 'none';\n        };\n    <\/script>\n</body>\n</html>\n
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaya Wallet</title>
+  <meta name="description" content="Kaya Wallet - Demo landing + fake login + dashboard preview" />
+  <style>
+    :root{
+      --bg:#070707; --bg2:#121212;
+      --text:#f5f5f5; --muted:#bdbdbd;
+      --gold:#d4af37; --gold2:#ffdf6e;
+      --card:rgba(255,255,255,.06); --border:rgba(255,255,255,.12);
+      --shadow:0 14px 40px rgba(0,0,0,.55);
+      --radius:16px; --green:#6ee7a8; --red:#ff9aa0;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(212,175,55,.18), transparent 55%),
+        radial-gradient(900px 500px at 85% 25%, rgba(255,223,110,.10), transparent 55%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1100px,92%);margin:0 auto}
+    .glass{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    /* NAV */
+    .nav{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:blur(12px);
+      background:rgba(0,0,0,.35);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px;cursor:pointer}
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background:radial-gradient(circle at 30% 30%, var(--gold2), var(--gold));
+      box-shadow:0 10px 26px rgba(212,175,55,.22);
+      position:relative;
+    }
+    .logo:after{content:"";position:absolute;inset:7px;border-radius:8px;border:1px solid rgba(0,0,0,.25);background:rgba(0,0,0,.15)}
+    .nav-links{display:flex;gap:18px;align-items:center;font-size:14px;color:var(--muted)}
+    .nav-links a{padding:8px 10px;border-radius:10px}
+    .nav-links a:hover{background:rgba(255,255,255,.06);color:var(--text)}
+    .nav-cta{display:flex;gap:10px;align-items:center}
+
+    /* BUTTONS */
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 14px;border-radius:12px;
+      font-weight:700;font-size:14px;cursor:pointer;
+      transition:transform .15s ease,background .15s ease,border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22)}
+    .btn-small{padding:9px 12px;border-radius:11px;font-size:13px}
+    .btn-gold{
+      border:none;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      color:#111;
+      box-shadow:0 14px 38px rgba(212,175,55,.20);
+      position:relative;overflow:hidden;
+    }
+    .btn-gold:before{
+      content:"";position:absolute;top:-120%;left:-40%;
+      width:60%;height:300%;
+      background:rgba(255,255,255,.22);
+      transform:rotate(22deg);
+      transition:left .65s ease;
+    }
+    .btn-gold:hover:before{left:120%}
+
+    /* HERO */
+    header.hero{padding:56px 0 34px}
+    .hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:26px;align-items:center}
+    .headline{font-size:clamp(36px,5vw,56px);line-height:1.05;margin:0 0 14px;letter-spacing:-.6px}
+    .headline span{
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .sub{margin:0 0 22px;color:var(--muted);font-size:16px;line-height:1.6;max-width:56ch}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;color:rgba(255,255,255,.78);font-size:13px}
+    .pill{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);padding:8px 10px;border-radius:999px}
+
+    /* PREVIEW CARD */
+    .preview{padding:16px;position:relative;overflow:hidden}
+    .preview:before{
+      content:"";position:absolute;inset:-60px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(212,175,55,.18), transparent 60%),
+        radial-gradient(circle at 70% 80%, rgba(255,223,110,.10), transparent 55%);
+      pointer-events:none;
+    }
+    .wallet-card{
+      position:relative;
+      padding:16px;border-radius:18px;
+      background:linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      overflow:hidden;
+    }
+    .wallet-card:after{
+      content:"";position:absolute;width:220px;height:220px;right:-110px;top:-110px;
+      background:radial-gradient(circle, rgba(212,175,55,.22), transparent 65%);
+    }
+    .wallet-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;position:relative}
+    .tag{font-size:12px;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);padding:6px 10px;border-radius:999px}
+    .balance{margin-top:14px;font-size:28px}
+    .balance small{font-size:12px;color:rgba(255,255,255,.72);display:block;margin-bottom:4px}
+    .quick{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .qbtn{padding:10px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);font-size:12px;color:rgba(255,255,255,.86);text-align:center}
+    .tx{margin-top:14px;padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18)}
+    .tx h3{margin:0 0 10px;font-size:13px;color:rgba(255,255,255,.82);font-weight:800}
+    .tx-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:13px}
+    .tx-item:first-of-type{border-top:none;padding-top:0}
+    .tx-left{display:flex;gap:10px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 8px 18px rgba(212,175,55,.22)}
+    .tx-name{color:rgba(255,255,255,.9)}
+    .tx-time{color:rgba(255,255,255,.55);font-size:11px}
+    .tx-amt{font-weight:900}
+    .pos{color:var(--green)} .neg{color:var(--red)}
+
+    /* SECTIONS */
+    section{padding:48px 0}
+    .section-title{font-size:22px;margin:0 0 10px}
+    .section-sub{margin:0 0 22px;color:var(--muted);line-height:1.6;max-width:70ch}
+
+    /* FEATURES */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .feature{padding:16px;min-height:140px;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+    .feature:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.20);background:rgba(255,255,255,.075)}
+    .icon{width:42px;height:42px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;margin-bottom:12px}
+    .feature h3{margin:0 0 8px;font-size:16px}
+    .feature p{margin:0;color:rgba(255,255,255,.72);line-height:1.55;font-size:13px}
+
+    /* DASHBOARD */
+    #dashboard{display:none}
+    #dashboard.show{display:block}
+    .dash-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .dash-title{margin:0;font-size:22px}
+    .dash-note{margin:6px 0 0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.55}
+    .badge{display:inline-block;margin-top:10px;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-size:12px;color:rgba(255,255,255,.78)}
+    .dash-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{padding:14px}
+    .stat .k{font-size:12px;color:rgba(255,255,255,.65)}
+    .stat .v{font-size:18px;font-weight:900;margin-top:8px}
+    .mini{
+      margin-top:12px;height:120px;border-radius:14px;border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(to top, rgba(212,175,55,.18), transparent 60%),
+        repeating-linear-gradient(to right, rgba(255,255,255,.06) 0 1px, transparent 1px 18px);
+      position:relative;overflow:hidden;
+    }
+    .mini:after{
+      content:"";position:absolute;inset:0;
+      background:
+        radial-gradient(circle at 20% 60%, rgba(255,223,110,.14), transparent 55%),
+        radial-gradient(circle at 80% 30%, rgba(212,175,55,.14), transparent 55%);
+      pointer-events:none;
+    }
+    .mini-label{position:absolute;top:10px;left:12px;font-size:12px;color:rgba(255,255,255,.72)}
+    .mini-line{position:absolute;left:10px;right:10px;bottom:22px;height:2px;background:linear-gradient(90deg, rgba(212,175,55,0), rgba(212,175,55,.9), rgba(255,223,110,.9))}
+    .mini-dots{position:absolute;left:10px;right:10px;bottom:22px;height:2px}
+    .mini-dots span{
+      position:absolute;width:8px;height:8px;border-radius:999px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 8px 18px rgba(212,175,55,.18);
+      transform:translateY(-3px);
+    }
+
+    /* LOGIN MODAL */
+    .overlay{
+      position:fixed;inset:0;z-index:1000;
+      background:rgba(0,0,0,.62);
+      backdrop-filter:blur(8px);
+      display:none;
+      padding:18px;
+    }
+    .overlay.show{display:grid;place-items:center}
+    .modal{width:min(520px,100%);padding:16px}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .modal-title{font-weight:950}
+    .x{
+      width:38px;height:38px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);cursor:pointer;
+    }
+    .form{display:grid;gap:10px;margin-top:10px}
+    .field{display:grid;gap:6px}
+    label{font-size:12px;color:rgba(255,255,255,.72)}
+    input{
+      width:100%;padding:12px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      outline:none;font-size:14px;
+    }
+    input:focus{border-color:rgba(255,223,110,.45)}
+    .hint{font-size:12px;color:rgba(255,255,255,.62);line-height:1.5;margin-top:2px}
+    .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+    /* FOOTER */
+    footer{padding:26px 0 40px;color:rgba(255,255,255,.62);border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.18)}
+    .footer-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .social{display:flex;gap:10px}
+    .social a{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}
+    .social a:hover{background:rgba(255,255,255,.08)}
+
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.show{opacity:1;transform:translateY(0)}
+
+    /* RESPONSIVE */
+    @media (max-width: 900px){.hero-grid{grid-template-columns:1fr;gap:18px}.nav-links{display:none}}
+    @media (max-width: 820px){.dash-grid{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr}}
+    @media (max-width: 700px){section{padding:40px 0}.features{grid-template-columns:1fr}.wallet-card{border-radius:16px}}
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand" onclick="goTop()">
+        <div class="logo"></div>
+        <div>Kaya <span style="color:var(--gold)">Wallet</span></div>
+      </div>
+
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#preview">Preview</a>
+        <a href="#dashboardAnchor" id="dashLink" style="display:none">Dashboard</a>
+      </div>
+
+      <div class="nav-cta">
+        <button class="btn btn-small" onclick="scrollToId('features')">Explore</button>
+        <button class="btn btn-gold btn-small" id="btnTopLogin" onclick="openLogin()">Get Started</button>
+        <button class="btn btn-small" id="btnTopLogout" onclick="logout()" style="display:none">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="container hero-grid">
+      <div class="reveal show">
+        <h1 class="headline">Kaya <span>Wallet</span></h1>
+        <p class="sub">
+          Your Smart Digital Finance Partner — send, pay, and manage your money with premium security,
+          lightning-fast transfers, and AI support.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-gold" onclick="openLogin()">Get Started</button>
+          <button class="btn" onclick="scrollToId('preview')">See Preview</button>
+        </div>
+        <div class="pill-row">
+          <div class="pill">✅ Instant Transfer</div>
+          <div class="pill">🔒 Bank-Grade Security</div>
+          <div class="pill">🤖 24/7 AI Support</div>
+        </div>
+      </div>
+
+      <div class="glass preview reveal" id="preview">
+        <div class="wallet-card">
+          <div class="wallet-top">
+            <div>
+              <div style="font-weight:900">Kaya Wallet</div>
+              <div style="color:rgba(255,255,255,.65);font-size:12px;margin-top:4px">Premium Digital Account</div>
+            </div>
+            <div class="tag">Active</div>
+          </div>
+
+          <div class="balance"><small>Available Balance</small>RM 12,580.50</div>
+
+          <div class="quick">
+            <div class="qbtn">Send</div>
+            <div class="qbtn">Pay</div>
+            <div class="qbtn">Top Up</div>
+          </div>
+
+          <div class="tx">
+            <h3>Recent Transactions</h3>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">FPX Transfer</div><div class="tx-time">Today • 3:12 PM</div></div></div>
+              <div class="tx-amt pos">+ RM 850.00</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">DuitNow QR</div><div class="tx-time">Yesterday • 8:40 PM</div></div></div>
+              <div class="tx-amt neg">- RM 42.50</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">Reload</div><div class="tx-time">Yesterday • 2:05 PM</div></div></div>
+              <div class="tx-amt neg">- RM 100.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title reveal">Features built for speed & trust</h2>
+      <p class="section-sub reveal">Kaya Wallet helps you move money fast, pay securely, and stay in control — with a premium experience.</p>
+
+      <div class="features">
+        <div class="glass feature reveal">
+          <div class="icon">⚡</div>
+          <h3>Instant Transfer</h3>
+          <p>Send money in seconds with smooth flows and clear confirmation.</p>
+        </div>
+        <div class="glass feature reveal">
+          <div class="icon">🛡️</div>
+          <h3>Secure Payment</h3>
+          <p>Protected sessions and safer checkout experience for QR and online payments.</p>
+        </div>
+        <div class="glass feature reveal">
+          <div class="icon">🤖</div>
+          <h3>24/7 AI Support</h3>
+          <p>Always-on assistant to guide payments, track spending, and help anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PREVIEW (hidden until login) -->
+  <div id="dashboardAnchor"></div>
+  <section id="dashboard">
+    <div class="container">
+      <div class="dash-top">
+        <div>
+          <h2 class="dash-title">Dashboard Preview</h2>
+          <p class="dash-note">Demo mode only. This is a UI preview after login.</p>
+          <span class="badge">Demo User: <b id="demoUser">guest@kaya.com</b></span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" onclick="toast('Demo: Transfer flow coming soon')">New Transfer</button>
+          <button class="btn btn-gold" onclick="toast('Demo: Scan & Pay coming soon')">Scan & Pay</button>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="glass" style="padding:16px;">
+          <div class="stat-row">
+            <div class="glass stat">
+              <div class="k">Available Balance</div>
+              <div class="v">RM 12,580.50</div>
+              <div class="hint">Updated just now</div>
+            </div>
+            <div class="glass stat">
+              <div class="k">This Month Spend</div>
+              <div class="v">RM 1,420.35</div>
+              <div class="hint">QR + online</div>
+            </div>
+            <div class="glass stat">
+              <div class="k">Security Status</div>
+              <div class="v" style="color:var(--green)">Protected</div>
+              <div class="hint">2FA Ready</div>
+            </div>
+          </div>
+
+          <div class="mini" aria-hidden="true">
+            <div class="mini-label">Spending Trend (Demo)</div>
+            <div class="mini-line"></div>
+            <div class="mini-dots">
+              <span style="left:6%"></span>
+              <span style="left:22%;bottom:10px"></span>
+              <span style="left:40%;bottom:4px"></span>
+              <span style="left:60%;bottom:18px"></span>
+              <span style="left:78%;bottom:8px"></span>
+              <span style="left:92%;bottom:22px"></span>
+            </div>
+          </div>
+
+          <div class="glass" style="padding:14px;margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div style="font-weight:900;">Quick Actions</div>
+              <div class="hint">Demo buttons</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;">
+              <button class="btn" onclick="toast('Demo: Top Up')">Top Up</button>
+              <button class="btn" onclick="toast('Demo: Pay Bills')">Pay Bills</button>
+              <button class="btn" onclick="toast('Demo: Card Settings')">Card</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass" style="padding:16px;">
+          <div style="font-weight:950;">Recent Activity</div>
+          <div class="hint" style="margin-top:4px;">Demo transactions list</div>
+
+          <div style="margin-top:12px;">
+            <div class="tx-item" style="border-top:none;padding-top:0;">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">DuitNow QR • Coffee</div><div class="tx-time">Today • 10:14 AM</div></div></div>
+              <div class="tx-amt neg">- RM 12.90</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">FPX • Salary</div><div class="tx-time">Yesterday • 6:02 PM</div></div></div>
+              <div class="tx-amt pos">+ RM 3,200.00</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">Reload • Mobile Data</div><div class="tx-time">Yesterday • 2:05 PM</div></div></div>
+              <div class="tx-amt neg">- RM 35.00</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-left"><div class="dot"></div><div><div class="tx-name">Transfer • Family</div><div class="tx-time">2 days ago • 9:17 PM</div></div></div>
+              <div class="tx-amt neg">- RM 120.00</div>
+            </div>
+          </div>
+
+          <div class="glass" style="padding:14px;margin-top:12px;">
+            <div style="font-weight:900;">Security</div>
+            <div class="hint" style="margin-top:6px;">Enable biometric, set PIN, and turn on alerts.</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+              <button class="btn" onclick="toast('Demo: Enable Biometric')">Biometric</button>
+              <button class="btn" onclick="toast('Demo: Set PIN')">Set PIN</button>
+              <button class="btn btn-gold" onclick="toast('Demo: Alerts enabled')">Alerts</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-row">
+      <div>
+        <div style="font-weight:900;color:rgba(255,255,255,.86)">Kaya Wallet</div>
+        <div style="margin-top:6px">© 2026 Kaya Wallet. Demo preview site.</div>
+      </div>
+      <div class="social">
+        <a href="#" onclick="toast('Add Facebook link')">F</a>
+        <a href="#" onclick="toast('Add Instagram link')">I</a>
+        <a href="#" onclick="toast('Add WhatsApp link')">W</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="overlay" id="overlay" onclick="overlayClick(event)">
+    <div class="glass modal" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title">Login to Kaya Wallet (Demo)</div>
+        <button class="x" onclick="closeLogin()">✕</button>
+      </div>
+
+      <div class="hint">Tip: Any email/password works. This is only a preview UI.</div>
+
+      <div class="form">
+        <div class="field">
+          <label>Email</label>
+          <input id="email" type="email" placeholder="you@kaya.com" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="password" type="password" placeholder="••••••••" />
+          <div class="hint">Demo only — no real authentication.</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="fillDemo()">Use Demo Account</button>
+        <button class="btn btn-gold" onclick="doLogin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    function onScroll(){
+      const trigger = window.innerHeight * 0.88;
+      reveals.forEach(el=>{
+        if(el.getBoundingClientRect().top < trigger) el.classList.add('show');
+      });
+    }
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+
+    // Toast
+    let toastEl;
+    function toast(msg){
+      if(!toastEl){
+        toastEl=document.createElement('div');
+        Object.assign(toastEl.style,{position:'fixed',left:'50%',bottom:'22px',transform:'translateX(-50%)',padding:'12px 14px',borderRadius:'14px',background:'rgba(0,0,0,.78)',border:'1px solid rgba(255,255,255,.14)',backdropFilter:'blur(10px)',color:'white',fontWeight:'800',fontSize:'13px',opacity:'0',transition:'opacity .18s ease',zIndex:'9999'});
+        document.body.appendChild(toastEl);
+      }
+      toastEl.textContent=msg;
+      toastEl.style.opacity='1';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer=setTimeout(()=>toastEl.style.opacity='0',1400);
+    }
+
+    // Helpers
+    function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+    function goTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+    // Login modal
+    const overlay = document.getElementById('overlay');
+    function openLogin(){ overlay.classList.add('show'); setTimeout(()=>document.getElementById('email').focus(),50); }
+    function closeLogin(){ overlay.classList.remove('show'); }
+    function overlayClick(e){ if(e.target===overlay) closeLogin(); }
+    function fillDemo(){
+      document.getElementById('email').value='demo@kaya.com';
+      document.getElementById('password').value='demo1234';
+      toast('Demo account filled ✅');
+    }
+
+    // Fake auth state
+    const dashboard = document.getElementById('dashboard');
+    const demoUser = document.getElementById('demoUser');
+    const dashLink = document.getElementById('dashLink');
+    const btnTopLogin = document.getElementById('btnTopLogin');
+    const btnTopLogout = document.getElementById('btnTopLogout');
+
+    function setLoggedInUI(email){
+      demoUser.textContent = email || 'guest@kaya.com';
+      dashboard.classList.add('show');
+      dashLink.style.display='inline-block';
+      btnTopLogin.style.display='none';
+      btnTopLogout.style.display='inline-block';
+    }
+    function setLoggedOutUI(){
+      dashboard.classList.remove('show');
+      dashLink.style.display='none';
+      btnTopLogin.style.display='inline-block';
+      btnTopLogout.style.display='none';
+    }
+
+    function doLogin(){
+      const email = (document.getElementById('email').value || '').trim();
+      const pass  = (document.getElementById('password').value || '').trim();
+      if(!email || !pass){ toast('Fill email & password first'); return; }
+
+      closeLogin();
+      setLoggedInUI(email);
+      toast('Logged in (Demo) ✅');
+      setTimeout(()=>scrollToId('dashboardAnchor'),150);
+    }
+
+    function logout(){
+      setLoggedOutUI();
+      toast('Logged out ✅');
+      goTop();
+    }
+
+    // Start logged out
+    setLoggedOutUI();
+  </script>
+</body>
+</html>
